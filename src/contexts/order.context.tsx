@@ -103,7 +103,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         isFetchingProducts,
       }}
     >
-      ``
       {children}
     </OrderContext.Provider>
   );

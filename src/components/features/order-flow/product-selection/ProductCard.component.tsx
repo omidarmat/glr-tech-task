@@ -9,10 +9,8 @@ import {
 export default function ProductCard({ product }: { product: Product }) {
   const { items, addItem, removeItem } = useOrder();
 
-  const isInCart = items.find((item) => item.product.id === product.id);
-  const hasQuantity = isInCart && isInCart?.quantity > 0;
-
   const currentItem = items.find((item) => item.product.id === product.id);
+  const hasQuantity = currentItem && currentItem?.quantity > 0;
 
   return (
     <div

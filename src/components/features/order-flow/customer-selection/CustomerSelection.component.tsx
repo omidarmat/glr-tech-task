@@ -19,6 +19,7 @@ export function CustomerSelection({ onNextStep }: { onNextStep: () => void }) {
   return (
     <div>
       <input
+        placeholder="Search customer name"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="border border-neutral-200 rounded-lg p-2 w-full mb-4"
