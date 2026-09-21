@@ -1,12 +1,20 @@
+import { appConfig } from "@/config/app.config";
+import { useOrder } from "@/contexts";
 import { useCustomers } from "@/services";
+import type { Customer } from "@/types/customers.types";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useState } from "react";
 
-export function CustomerSelection() {
-  const { data: customers, isFetching: isFetchingCustomers } = useCustomers();
+export function CustomerSelection({ onNextStep }: { onNextStep: () => void }) {
+  const { setCustomer, customers, isFetchingCustomers } = useOrder();
 
   const [query, setQuery] = useState("");
-  const debouncedQuery = useDebounce(query, 500);
+  const debouncedQuery = useDebounce(query, appConfig.queryDebounceTime);
+
+  function handleSelectCustomer(customer: Customer) {
+    setCustomer(customer);
+    onNextStep();
+  }
 
   return (
     <div>
@@ -28,6 +36,7 @@ export function CustomerSelection() {
             ?.filter((customer) => customer.name.includes(debouncedQuery))
             .map((customer) => (
               <button
+                onClick={() => handleSelectCustomer(customer)}
                 key={customer.id}
                 className="block w-full text-left p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 cursor-pointer"
               >

@@ -1,21 +1,38 @@
 import { OrderFlowStep } from "@/types/order-flow.types";
 import { useState } from "react";
 import { CustomerSelection } from "./customer-selection/CustomerSelection.component";
-import { ProductSelection } from "./product-selection/ProductSelection.component";
 import { OrderSummary } from "./order-summary/OrderSummary.component";
-import { FlowStepper } from "./common/flow-stepper/FlowStepper.component";
+import { ProductSelection } from "./product-selection/ProductSelection.component";
+import { useOrder } from "@/contexts";
+import { FlowStepper, SelectedCustomer } from "./common";
 
 export function OrderFlow() {
-  const [step, setStep] = useState<OrderFlowStep>(
+  const { customer } = useOrder();
+
+  const [stepId, setStepId] = useState<OrderFlowStep>(
     OrderFlowStep.CustomerSelection,
   );
 
+  function handleNextStep(stepId: OrderFlowStep) {
+    setStepId(stepId);
+  }
+
   return (
     <div>
-      <FlowStepper step={step} />
-      {step === OrderFlowStep.CustomerSelection && <CustomerSelection />}
-      {step === OrderFlowStep.ProductSelection && <ProductSelection />}
-      {step === OrderFlowStep.OrderSummary && <OrderSummary />}
+      <FlowStepper currentStepId={stepId} />
+      <SelectedCustomer customer={customer} />
+
+      {stepId === OrderFlowStep.CustomerSelection && (
+        <CustomerSelection
+          onNextStep={() => handleNextStep(OrderFlowStep.ProductSelection)}
+        />
+      )}
+      {stepId === OrderFlowStep.ProductSelection && (
+        <ProductSelection
+          onNextStep={() => handleNextStep(OrderFlowStep.OrderSummary)}
+        />
+      )}
+      {stepId === OrderFlowStep.OrderSummary && <OrderSummary />}
     </div>
   );
 }
