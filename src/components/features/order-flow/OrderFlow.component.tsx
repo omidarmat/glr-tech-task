@@ -1,10 +1,10 @@
 import { OrderFlowStep } from "@/types/order-flow.types";
 import { useState } from "react";
 import { CustomerSelection } from "./customer-selection/CustomerSelection.component";
-import { OrderSummary } from "./order-summary/OrderSummary.component";
 import { ProductSelection } from "./product-selection/ProductSelection.component";
 import { useOrder } from "@/contexts";
 import { FlowStepper, SelectedCustomer } from "./common";
+import { OrderSummary } from "./order-summary/OrderSummary.component";
 
 export function OrderFlow() {
   const { customer } = useOrder();

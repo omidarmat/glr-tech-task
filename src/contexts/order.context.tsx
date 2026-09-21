@@ -1,5 +1,6 @@
 import { useCustomers, useProducts } from "@/services";
 import type { Customer } from "@/types/customers.types";
+import type { OrderItem } from "@/types/order-flow.types";
 import type { Product } from "@/types/products.types";
 import {
   createContext,
@@ -9,11 +10,6 @@ import {
   type SetStateAction,
 } from "react";
 import toast from "react-hot-toast";
-
-interface OrderItem {
-  product: Product;
-  quantity: number;
-}
 
 interface OrderContextType {
   customer: Customer | null;
