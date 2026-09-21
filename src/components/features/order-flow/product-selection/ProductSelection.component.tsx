@@ -52,12 +52,14 @@ export function ProductSelection({ onNextStep }: { onNextStep: () => void }) {
           ))}
       </div>
 
-      <button
-        onClick={() => onNextStep()}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md w-full cursor-pointer hover:bg-blue-600"
-      >
-        Proceed to checkout
-      </button>
+      {items.length > 0 && (
+        <button
+          onClick={() => onNextStep()}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md w-full cursor-pointer hover:bg-blue-600"
+        >
+          Proceed to checkout
+        </button>
+      )}
     </div>
   );
 }
