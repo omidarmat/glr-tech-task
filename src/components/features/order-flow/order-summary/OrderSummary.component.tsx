@@ -1,9 +1,9 @@
-import { useOrder } from "@/contexts";
+import { useOrderItems } from "@/contexts";
 import { OrderItemCard } from "./OrderItemCard.component";
 import OrderTotals from "./OrderTotals";
 
 export function OrderSummary() {
-  const { items } = useOrder();
+  const { items } = useOrderItems();
 
   return (
     <div>
@@ -12,7 +12,7 @@ export function OrderSummary() {
           <OrderItemCard key={item.product.id} item={item} />
         ))}
       </div>
-      <OrderTotals />
+      <OrderTotals items={items} />
     </div>
   );
 }

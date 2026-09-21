@@ -1,16 +1,23 @@
-import { useOrder } from "@/contexts";
 import type { Product } from "@/types/products.types";
 import {
   CreditCardOutlined,
   MinusOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import { memo } from "react";
 
-export default function ProductCard({ product }: { product: Product }) {
-  const { items, addItem, removeItem } = useOrder();
-
-  const currentItem = items.find((item) => item.product.id === product.id);
-  const hasQuantity = currentItem && currentItem?.quantity > 0;
+function ProductCard({
+  product,
+  quantity,
+  onAdd,
+  onRemove,
+}: {
+  product: Product;
+  quantity: number;
+  onAdd: (product: Product, quantity: number) => void;
+  onRemove: (productId: Product["id"], quantity: number) => void;
+}) {
+  const hasQuantity = quantity > 0;
 
   return (
     <div
@@ -24,20 +31,18 @@ export default function ProductCard({ product }: { product: Product }) {
           <strong>{product.price}</strong>
         </div>
         <div className="flex items-center gap-4">
-          {currentItem && currentItem?.quantity > 0 && (
+          {hasQuantity && (
             <button
-              onClick={() => removeItem(product.id, 1)}
+              onClick={() => onRemove(product.id, 1)}
               className="px-2 py-1 rounded-lg bg-neutral-200 hover:bg-neutral-300"
             >
               <MinusOutlined />
             </button>
           )}
-          {currentItem && currentItem?.quantity > 0 && (
-            <span>{currentItem.quantity}</span>
-          )}
+          {hasQuantity && <span>{quantity}</span>}
 
           <button
-            onClick={() => addItem(product.id, 1)}
+            onClick={() => onAdd(product, 1)}
             className="px-2 py-1 rounded-lg bg-neutral-200 hover:bg-neutral-300"
           >
             <PlusOutlined />
@@ -47,3 +52,5 @@ export default function ProductCard({ product }: { product: Product }) {
     </div>
   );
 }
+
+export default memo(ProductCard);

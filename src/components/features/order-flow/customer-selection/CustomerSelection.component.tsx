@@ -1,20 +1,32 @@
 import { appConfig } from "@/config/app.config";
-import { useOrder } from "@/contexts";
+import { useOrderCustomer } from "@/contexts";
 import { useCustomers } from "@/services";
 import type { Customer } from "@/types/customers.types";
 import { useDebounce } from "@uidotdev/usehooks";
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 export function CustomerSelection({ onNextStep }: { onNextStep: () => void }) {
-  const { setCustomer, customers, isFetchingCustomers } = useOrder();
+  const { setCustomer } = useOrderCustomer();
+  const { data: customers, isFetching: isFetchingCustomers } = useCustomers();
 
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, appConfig.queryDebounceTime);
 
-  function handleSelectCustomer(customer: Customer) {
-    setCustomer(customer);
-    onNextStep();
-  }
+  const handleSelectCustomer = useCallback(
+    (customer: Customer) => {
+      setCustomer(customer);
+      onNextStep();
+    },
+    [onNextStep, setCustomer],
+  );
+
+  const filteredCustomers = useMemo(() => {
+    if (!customers) return [];
+    if (!debouncedQuery) return customers;
+    return customers.filter((customer) =>
+      customer.name.includes(debouncedQuery),
+    );
+  }, [customers, debouncedQuery]);
 
   return (
     <div>
@@ -32,19 +44,31 @@ export function CustomerSelection({ onNextStep }: { onNextStep: () => void }) {
           ))}
 
         {!isFetchingCustomers &&
-          customers &&
-          customers
-            ?.filter((customer) => customer.name.includes(debouncedQuery))
-            .map((customer) => (
-              <button
-                onClick={() => handleSelectCustomer(customer)}
-                key={customer.id}
-                className="block w-full text-left p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 cursor-pointer"
-              >
-                {customer.name}
-              </button>
-            ))}
+          filteredCustomers.map((customer) => (
+            <CustomerListItem
+              key={customer.id}
+              customer={customer}
+              onSelect={handleSelectCustomer}
+            />
+          ))}
       </div>
     </div>
   );
 }
+
+const CustomerListItem = memo(function CustomerListItem({
+  customer,
+  onSelect,
+}: {
+  customer: Customer;
+  onSelect: (customer: Customer) => void;
+}) {
+  return (
+    <button
+      onClick={() => onSelect(customer)}
+      className="block w-full text-left p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 cursor-pointer"
+    >
+      {customer.name}
+    </button>
+  );
+});
